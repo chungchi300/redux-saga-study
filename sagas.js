@@ -22,7 +22,7 @@ export function sleep(mileseconds){
   });
 }
 export async function asyncSugarSleep(mileseconds){
- return  await sleep(1000);
+ return  await sleep(mileseconds);
 }
 export function* myOwnIncrementAsync(){
   //the generator executor of saga convert the action to dispatch action
@@ -30,8 +30,12 @@ export function* myOwnIncrementAsync(){
   //the generator executor of saga handle promise&another generator by chaining them
   console.time("wait");
   let callHelloSagaRes = yield call(helloSaga);
-  let sleepRes = yield sleep(1000);
-  let asyncSleepRes = yield call(asyncSugarSleep);
+  //let sleepRes = yield sleep(1000);, do the same thing, but wrap it with call  make it more testable(named as declarative calls)
+  //https://redux-saga-in-chinese.js.org/docs/basics/DispatchingActions.html
+  //allow testing by mocking
+  let sleepRes = yield call(sleep,1000);
+  let asyncSleepRes = yield call(asyncSugarSleep,1000);
+ 
   console.log({sleepRes,asyncSleepRes,callHelloSagaRes})
   console.timeEnd("wait");
 
